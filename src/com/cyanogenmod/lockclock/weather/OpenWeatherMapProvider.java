@@ -121,6 +121,12 @@ public class OpenWeatherMapProvider implements WeatherProvider {
                 localizedCityName = conditions.getString("name");
             }
 
+            float windSpeed = (float) windData.getDouble("speed");
+            if (metric) {
+                // speeds are in m/s so convert to our common metric unit km/h
+                windSpeed *= 3.6f;
+            }
+
             WeatherInfo w = new WeatherInfo(mContext, conditions.getString("id"), localizedCityName,
                     /* condition */ weather.getString("main"),
                     /* conditionCode */ mapConditionIconToCode(
@@ -128,7 +134,7 @@ public class OpenWeatherMapProvider implements WeatherProvider {
                     /* temperature */ sanitizeTemperature(conditionData.getDouble("temp"), metric),
                     /* tempUnit */ metric ? "C" : "F",
                     /* humidity */ (float) conditionData.getDouble("humidity"),
-                    /* wind */ (float) windData.getDouble("speed"),
+                    /* wind */ windSpeed,
                     /* windDir */ windData.getInt("deg"),
                     /* speedUnit */ mContext.getString(speedUnitResId),
                     forecasts,
